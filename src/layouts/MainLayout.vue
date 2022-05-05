@@ -15,6 +15,7 @@
         <q-toolbar-title class="text-grand-hotel text-bold">
           Machtagram
         </q-toolbar-title>
+        <q-separator vertical spaced class="large-screen-only" />
         <q-btn
           class="large-screen-only"
           to="/#/"
@@ -23,6 +24,17 @@
           size="18px"
           dense
           icon="eva-home-outline"
+        />
+        <q-separator vertical spaced class="large-screen-only" />
+        <q-btn
+          v-if="user"
+          class="large-screen-only"
+          @click="signOut()"
+          flat
+          round
+          size="18px"
+          dense
+          icon="eva-log-out-outline"
         />
       </q-toolbar>
     </q-header>
@@ -91,12 +103,15 @@
 </template>
 <script>
 let deferredPrompt;
+
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 export default {
   name: "MainLayout",
 
   data() {
     return {
       showAppInstallBanner: false,
+      user: true,
     };
   },
   methods: {
@@ -119,7 +134,20 @@ export default {
       this.showAppInstallBanner = false;
       this.$q.localStorage.set("neverShowAppInstallBanner", true);
     },
+
+    signOut() {
+      const auth = getAuth();
+      signOut(auth)
+        .then(() => {
+          this.$router.push(`/login`);
+          // Sign-out successful.
+        })
+        .catch((error) => {
+          // An error happened.
+        });
+    },
   },
+
   mounted() {
     let neverShowAppInstallBanner = this.$q.localStorage.getItem(
       "neverShowAppInstallBanner"
@@ -136,6 +164,14 @@ export default {
           this.showAppInstallBanner = true;
         }, 3000);
       });
+    }
+  },
+  created() {
+    if (!window.user) {
+      this.user = false;
+    }
+    if (window.user) {
+      this.user = true;
     }
   },
 };

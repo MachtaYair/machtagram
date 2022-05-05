@@ -26,6 +26,7 @@ module.exports = configure(function (ctx) {
     boot: [
 
       'axios',
+      'firebase',
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
@@ -103,7 +104,7 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Dialog','Notify', 'Loading', 'LocalStorage', 'SessionStorage'
+        'Dialog','Notify', 'Loading', 'LocalStorage', 'SessionStorage', 'Cookies',
       ]
     },
 
@@ -150,7 +151,7 @@ module.exports = configure(function (ctx) {
       manifest: {
         name: `Machtagram - User-friendly social network App`,
         short_name: `Machtagram`,
-        description: `A Quasar Project`,
+        description: `Social photo sharing app`,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',

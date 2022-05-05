@@ -23,15 +23,14 @@
             <q-item>
               <q-item-section avatar>
                 <q-avatar>
-                  <img
-                    alt="img"
-                    src="https://media-exp1.licdn.com/dms/image/C4D03AQFqj0kzopqxYQ/profile-displayphoto-shrink_100_100/0/1646600523285?e=1654128000&v=beta&t=jwAp3jb41B3xSkdxSiZgxejpgGi-7qhlzONWzpJPUZc"
-                  />
+                  <img alt="img" :src="post.userPhoto" />
                 </q-avatar>
               </q-item-section>
 
               <q-item-section>
-                <q-item-label class="text-bold">Yair_Machta</q-item-label>
+                <q-item-label class="text-bold">{{
+                  post.postedBy
+                }}</q-item-label>
                 <q-item-label caption> {{ post.location }}</q-item-label>
               </q-item-section>
             </q-item>
@@ -91,16 +90,15 @@
         <q-item class="fixed">
           <q-item-section avatar>
             <q-avatar size="48px">
-              <img
-                alt="img"
-                src="https://media-exp1.licdn.com/dms/image/C4D03AQFqj0kzopqxYQ/profile-displayphoto-shrink_100_100/0/1646600523285?e=1654128000&v=beta&t=jwAp3jb41B3xSkdxSiZgxejpgGi-7qhlzONWzpJPUZc"
-              />
+              <img alt="img" :src="user.photoURL" />
             </q-avatar>
           </q-item-section>
 
           <q-item-section>
-            <q-item-label class="text-bold">Yair_Machta</q-item-label>
-            <q-item-label caption>Yair Machta</q-item-label>
+            <q-item-label class="text-bold">{{
+              user.displayName
+            }}</q-item-label>
+            <q-item-label caption> {{ user.email }}</q-item-label>
           </q-item-section>
         </q-item>
       </div>
@@ -111,6 +109,9 @@
 <script>
 import { date } from "quasar";
 import { openDB, deleteDB, wrap, unwrap } from "idb";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { LocalStorage, SessionStorage } from "quasar";
+import { useQuasar } from "quasar";
 
 export default {
   name: "HomePage",
@@ -119,6 +120,7 @@ export default {
     return {
       posts: [],
       loadingPosts: false,
+      user: window.user,
     };
   },
 
@@ -205,7 +207,26 @@ export default {
     console.log("activated");
     this.getPosts();
   },
+
   created() {
+    // const $q = useQuasar();
+    // const User = $q.localStorage.getItem(user);
+    // console.log(User);
+    // this.user = User;
+    // const value = $q.localStorage.getItem(key)
+    // const value = $q.localStorage.getItem(key)
+    if (!window.user) {
+      this.$router.push(`/login`);
+    }
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        // ...
+      }
+    });
     this.listenForOfflinePostUploaded();
   },
 };

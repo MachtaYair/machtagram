@@ -103,6 +103,8 @@ app.post('/createPost', (request, response) => {
         id: fields.id,
         caption: fields.caption,
         location: fields.location,
+        postedBy: fields.postedBy,
+        userPhoto: fields.userPhoto,
         date: parseInt(fields.date),
         imageUrl: `https://firebasestorage.googleapis.com/v0/b/${ bucket.name }/o/${ uploadedFile.name }?alt=media&token=${ uuid }`
       }).then(() => {

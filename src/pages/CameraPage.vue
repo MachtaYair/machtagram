@@ -41,6 +41,7 @@
           dense
         />
       </div>
+
       <div class="row-justify-center q-ma-md">
         <q-input
           :loading="locationLoading"
@@ -78,6 +79,8 @@
 <script>
 import { uid } from "quasar";
 require("md-gum-polyfill");
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
 export default {
   name: "CameraPage",
 
@@ -94,6 +97,7 @@ export default {
       imageUpload: [],
       hasCameraSupport: true,
       locationLoading: false,
+      user: window.user,
     };
   },
 
@@ -228,6 +232,8 @@ export default {
       formData.append("caption", this.post.caption);
       formData.append("location", this.post.location);
       formData.append("date", this.post.date);
+      formData.append("postedBy", this.user.displayName);
+      formData.append("userPhoto", this.user.photoURL);
       formData.append("file", this.post.photo, this.post.id + `.png`);
       this.$axios
         .post(`${process.env.API}/createPost`, formData)
@@ -256,8 +262,27 @@ export default {
     },
   },
   mounted() {
+    if (!window.user) {
+      this.$router.push(`/login`);
+    }
     this.initCamera();
   },
+
+  created() {
+    if (!window.user) {
+      this.$router.push(`/login`);
+    }
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        // ...
+      }
+    });
+  },
+
   beforeDestroy() {
     if (this.hasCameraSupport) {
       this.disableCamera();
@@ -270,4 +295,8 @@ export default {
 .camera-frame
   border: 2px solid $grey-10
   border-radius: 10px
+
+.invisible
+  visibility: hidden
+  display: none
 </style>
