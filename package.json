@@ -15,12 +15,14 @@
     "core-js": "^3.6.5",
     "firebase": "^9.6.11",
     "idb": "^7.0.1",
+    "localbase": "^0.7.5",
     "md-gum-polyfill": "^1.0.0",
     "path": "^0.12.7",
     "quasar": "^2.6.0",
     "url": "^0.11.0",
     "vue": "^3.0.0",
-    "vue-router": "^4.0.0"
+    "vue-router": "^4.0.0",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@quasar/app-webpack": "^3.0.0",

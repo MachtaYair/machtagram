@@ -7,6 +7,7 @@
       class="q-mb-md"
       outlined
       label="Name"
+      :rules="[(val) => !!val || 'Field is required']"
     />
     <q-input
       style="max-width: 500px"
@@ -15,6 +16,7 @@
       outlined
       label="Email"
       type="email"
+      :rules="[(val) => !!val || 'Field is required']"
     />
     <q-input
       style="max-width: 500px"
@@ -23,6 +25,7 @@
       outlined
       type="password"
       label="Password"
+      :rules="[(val) => !!val || 'Field is required']"
     />
     <div class="tt large-screen-only">
       <q-space />
@@ -60,7 +63,9 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { useQuasar } from "quasar";
+
+import Localbase from "localbase";
+let lb = new Localbase("db");
 
 export default {
   name: "InnerForm",
@@ -92,7 +97,10 @@ export default {
         .then((userCredential) => {
           // Signed in
           window.user = userCredential.user;
+          userCredential.user.displayName = formData.name;
           this.user = userCredential.user;
+          console.log(userCredential.user);
+          this.addToLocalbase(userCredential.user);
           // ...
           this.$router.push(`/`);
         })
@@ -110,7 +118,7 @@ export default {
           // Signed in
           window.user = userCredential.user;
           this.user = userCredential.user;
-          console.log(window.user);
+          this.addToLocalbase(userCredential.user);
 
           // ...
           this.$router.push(`/`);
@@ -132,7 +140,7 @@ export default {
           // The signed-in user info.
           const user = result.user;
           window.user = result.user;
-          console.log(window.user);
+          this.addToLocalbase(result.user);
           // ...
           this.$router.push(`/`);
         })
@@ -146,6 +154,16 @@ export default {
           const credential = GoogleAuthProvider.credentialFromError(error);
           // ...
         });
+    },
+    addToLocalbase(user) {
+      lb.collection("activeUser").add(
+        {
+          photoURL: user.photoURL,
+          displayName: user.displayName,
+          email: user.email,
+        },
+        "user"
+      );
     },
   },
 };

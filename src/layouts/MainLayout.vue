@@ -27,7 +27,6 @@
         />
         <q-separator vertical spaced class="large-screen-only" />
         <q-btn
-          v-if="user"
           class="large-screen-only"
           @click="signOut()"
           flat
@@ -39,7 +38,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-footer class="bg-white" bordered>
+    <q-footer class="bg-white constrain" bordered>
       <transition
         appear
         enter-active-class="animated fadeIn"
@@ -47,7 +46,11 @@
       >
         <div v-if="showAppInstallBanner" class="banner-container bg-primary">
           <div class="constrain">
-            <q-banner class="bg-primary text-white" inline-actions dense>
+            <q-banner
+              class="bg-primary text-white q-mb-md"
+              inline-actions
+              dense
+            >
               <template v-slot:avatar>
                 <q-icon name="img:/icons/ms-icon-144x144.png" outline="white" />
               </template>
@@ -105,6 +108,9 @@
 let deferredPrompt;
 
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import Localbase from "localbase";
+let lb = new Localbase("db");
+
 export default {
   name: "MainLayout",
 
@@ -136,15 +142,28 @@ export default {
     },
 
     signOut() {
-      const auth = getAuth();
-      signOut(auth)
+      lb.collection("activeUser")
+        .delete()
         .then(() => {
-          this.$router.push(`/login`);
-          // Sign-out successful.
-        })
-        .catch((error) => {
-          // An error happened.
+          const auth = getAuth();
+          signOut(auth)
+            .then(() => {
+              this.$router.push(`/login`);
+              // Sign-out successful.
+            })
+            .catch((error) => {
+              // An error happened.
+            });
         });
+      // const auth = getAuth();
+      // signOut(auth)
+      //   .then(() => {
+      //     this.$router.push(`/login`);
+      //     // Sign-out successful.
+      //   })
+      //   .catch((error) => {
+      //     // An error happened.
+      //   });
     },
   },
 

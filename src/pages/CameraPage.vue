@@ -80,7 +80,8 @@
 import { uid } from "quasar";
 require("md-gum-polyfill");
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-
+import Localbase from "localbase";
+let lb = new Localbase("db");
 export default {
   name: "CameraPage",
 
@@ -97,7 +98,7 @@ export default {
       imageUpload: [],
       hasCameraSupport: true,
       locationLoading: false,
-      user: window.user,
+      user: {},
     };
   },
 
@@ -262,16 +263,23 @@ export default {
     },
   },
   mounted() {
-    if (!window.user) {
+    lb.collection("activeUser")
+      .doc("user")
+      .get()
+      .then((document) => {
+        this.user = document;
+      });
+    if (Object.keys(this.user).length === 0) {
       this.$router.push(`/login`);
+      if (this.hasCameraSupport) {
+        this.disableCamera();
+      }
+    } else {
+      this.initCamera();
     }
-    this.initCamera();
   },
 
   created() {
-    if (!window.user) {
-      this.$router.push(`/login`);
-    }
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {

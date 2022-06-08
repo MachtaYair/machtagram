@@ -149,7 +149,7 @@ module.exports = configure(function (ctx) {
 
 
       manifest: {
-        name: `Machtagram - User-friendly social network App`,
+        name: `Machtagram - Social photo sharing app`,
         short_name: `Machtagram`,
         description: `Social photo sharing app`,
         display: 'standalone',
